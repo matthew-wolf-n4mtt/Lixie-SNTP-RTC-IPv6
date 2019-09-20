@@ -1,0 +1,89 @@
+19-SEP-2019 Matthew J. Wolf Email: matthew.wolf at speciosus.net
+
+ Lixie-SNTP-IPv6:
+  A arduino sketch for a six digit Lixie US eastern time clock.
+  The sketch uses the internet protocol version 6 (IPv6)
+  SNTP client with a DS3231 real time clock.
+
+ - Version 1.0
+   = Initial version
+
+ SNTP is a simple subset of the full NTP protocol.
+
+ See RFC4330 for details of the protocol:
+  - https://tools.ietf.org/html/rfc4330
+
+ This example demonstrates of the basics of an SNTP client;
+ A real-world client should enforce RFC4330 properly, such as
+ the randomized time before sending a query at startup.
+
+ This example uses a static MAC address, please update the MAC with your
+ own static MAC address.
+
+ Get your own Random Locally Administered MAC Address here:
+ https://www.hellion.org.uk/cgi-bin/randmac.pl
+
+ Based on:
+ Lixie-arduino example "ntp_clock"
+   https://github.com/connornishijima/Lixie-arduino/tree/master/examples/ESP8266/ntp_clock
+
+ EtherSia example "SNTPClient"
+  https://github.com/njh/EtherSia/tree/master/examples/SNTPClient
+
+
+ Libraries that are used in this sketch:
+  -Lixie     : https://github.com/connornishijima/Lixie-arduino
+   -= Dependencies:
+      -== FastLED
+  -Time      : http://playground.arduino.cc/code/time
+  -EtherSia  : https://github.com/njh/EtherSia
+  -DS3232RTC : https://github.com/JChristensen/DS3232RTC
+   -= Dependencies:
+      -== Time
+  -Timezone  : http://github.com/JChristensen/Timezone
+   -= Dependencies:
+     -== Time
+
+ To Do:
+  - Button to switch between 12 hour and 24 hour time formats.
+  - Add display of calendar date.
+  - Function when Ethernet not connected.
+    -- Use RTC time.
+  - Functions when DNS resolution fails.
+    -- Use RTC time.
+
+Why Did I Create this arduino sketch?
+
+ I first created a Unix C program that ran on a raspberry pi that used the
+ six Lixie digit displays. The Lixie use 20 WS2812/B/S RGB LEDs.The RGB LEDs
+ are controlled by using a pulse-width modulation (PWM) controller. The C 
+ library that I used for the raspberry pi's PWM was not stable. Every few
+ minutes it would cause the clock to display the wrong color and digit. After
+ failing to get the C library to work I decided to try using the Lixie-arduino
+ arduino library.  
+ 
+Quick Description of the Arduino Sketch Loop:
+
+ The real time clock's , DS3231, time is what is displayed. NTP is used
+ to update the real time clock. A NTP request is only send every 15 seconds.
+
+ 1. Did the device receive a NTP responses packet?
+    a. No 
+    b. Yes 
+       - Get the time and date from the NTP responses packet.
+       - Convert the NTP UTC time to US eastern time. 
+       - Update the real time clock with the eastern time and date from the
+         NTP responses packet. 
+
+ 2. Is it time to send a NTP request.
+    a. No
+    b. Yes
+       - Send a NTP request.
+
+ 3. Get the current time from the real time clock.
+
+ 4. Display the current time on the Lixie displays.
+
+ 5. Wait half of second before the next loop.
+
+ 
